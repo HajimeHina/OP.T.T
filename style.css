@@ -1,0 +1,64 @@
+body {
+    background: #0d0d0f;
+    color: #f2f2f2;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background: #151518;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 2px solid #2a2a2e;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+nav a {
+    color: #aaa;
+    margin: 0 15px;
+    text-decoration: none;
+}
+
+nav a:hover {
+    color: #fff;
+}
+
+.hero {
+    text-align: center;
+    padding: 60px;
+}
+
+.subject-list {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+}
+
+.subject-list li {
+    margin: 15px 0;
+}
+
+.subject-list a {
+    color: #c5c5ff;
+    font-size: 1.2rem;
+    text-decoration: none;
+}
+
+.subject-list a:hover {
+    color: #fff;
+}
+.under-header {
+    margin-top: 20px;
+}
+.Header {
+    color: blueviolet;
+}
+
+#user-info {
+    margin-right: 400px;
+}
