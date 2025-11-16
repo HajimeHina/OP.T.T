@@ -1,231 +1,277 @@
-body {
-    background: #0d0d0f;
-    color: #f2f2f2;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-}
+    body {
+        background: #0d0d0f;
+        color: #f2f2f2;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
 
-header {
-    background: #151518;
-    padding: 20px;
-    text-align: center;
-    border-bottom: 2px solid #2a2a2e;
-}
+    header {
+        background: #151518;
+        padding: 20px;
+        text-align: center;
+        border-bottom: 2px solid #2a2a2e;
+    }
 
-header h1 {
-    margin: 0;
-    font-size: 2rem;
-}
+    header h1 {
+        margin: 0;
+        font-size: 2rem;
+    }
 
-nav {
+    nav {
+        display: flex;
+        align-items: center;
+        gap: 0px; /* space between buttons */
+    }
+
+
+    /* Make nav links look like buttons */
+    nav a {
+        display: inline-block;
+        background: #2a2a2e;
+        color: #fff;
+        padding: 10px 20px;
+        margin: 0 10px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background 0.3s, transform 0.2s;
+    }
+
+    nav a:hover {
+        background: #3a3a3e;
+        transform: scale(1.05);
+    }
+
+
+    .hero {
+        text-align: center;
+        padding: 60px;
+    }
+
+    .subject-list {
+        list-style: none;
+        padding: 0;
+        text-align: center;
+    }
+
+    .subject-list li {
+        margin: 15px 0;
+    }
+
+    .subject-list a {
+        color: #c5c5ff;
+        font-size: 1.2rem;
+        text-decoration: none;
+    }
+
+    .subject-list a:hover {
+        color: #fff;
+    }
+    .under-header {
+        margin-top: 20px;
+    }
+    .Header {
+        color: blueviolet;
+    }
+
+    #user-info {
+        margin-right: 400px;
+    }
+
+    #title {
+        margin-right: 210px;
+    }
+
+    .middle-box {
+        position: absolute;
+        top: 90%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 60%;
+        max-width: 700px;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        font-size: 1.2rem;
+        line-height: 1.6;
+        color: white;
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    /* Leaderboard styling */
+    #leaderboard {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    #leaderboard-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    #leaderboard-list li {
+        padding: 5px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* Profile panel improvements */
+    #profile-panel {
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .middle-box {
+            width: 90%;
+            font-size: 1rem;
+        }
+        
+        #leaderboard {
+            position: static;
+            margin: 20px;
+        }
+        
+        header h1 {
+            font-size: 1.5rem;
+        }
+    }
+
+    /* Test Points Button Styling */
+    #test-points-btn {
+        margin-top: 20px;
+        padding: 12px 24px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    #test-points-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        background: linear-gradient(45deg, #764ba2, #667eea);
+    }
+
+    #test-points-btn:active {
+        transform: translateY(0);
+    }
+
+    /* Admin Panel Tabs */
+    .admin-tab {
+        flex: 1;
+        padding: 8px 12px;
+        background: #2a2a2e;
+        color: white;
+        border: none;
+        border-radius: 5px 5px 0 0;
+        cursor: pointer;
+        font-size: 12px;
+        margin: 0 2px;
+    }
+
+    .admin-tab.active {
+        background: red;
+        font-weight: bold;
+    }
+
+    .admin-tab-content {
+        transition: all 0.3s ease;
+    }
+
+    /* Profile View Styling */
+    .profile-view {
+        text-align: left;
+    }
+
+    .profile-picture {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin: 0 auto 10px;
+        display: block;
+        border: 2px solid #764ba2;
+    }
+
+    .profile-bio {
+        background: rgba(255,255,255,0.1);
+        padding: 10px;
+        border-radius: 5px;
+        margin: 10px 0;
+        min-height: 60px;
+    }
+
+    .profile-stats {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #ccc;
+    }
+
+    .no-profile {
+        text-align: center;
+        color: #888;
+        font-style: italic;
+        padding: 20px;
+    }
+
+    /* User Stats Styling */
+#user-stats {
     display: flex;
     align-items: center;
-    gap: 0px; /* space between buttons */
+    gap: 15px;
+    font-size: 14px;
 }
 
-
-/* Make nav links look like buttons */
-nav a {
-    display: inline-block;
-    background: #2a2a2e;
-    color: #fff;
-    padding: 10px 20px;
-    margin: 0 10px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background 0.3s, transform 0.2s;
-}
-
-nav a:hover {
-    background: #3a3a3e;
-    transform: scale(1.05);
-}
-
-
-.hero {
-    text-align: center;
-    padding: 60px;
-}
-
-.subject-list {
-    list-style: none;
-    padding: 0;
-    text-align: center;
-}
-
-.subject-list li {
-    margin: 15px 0;
-}
-
-.subject-list a {
-    color: #c5c5ff;
-    font-size: 1.2rem;
-    text-decoration: none;
-}
-
-.subject-list a:hover {
-    color: #fff;
-}
-.under-header {
-    margin-top: 20px;
-}
-.Header {
-    color: blueviolet;
-}
-
-#user-info {
-    margin-right: 400px;
-}
-
-#title {
-    margin-right: 210px;
-}
-
-.middle-box {
-    position: absolute;
-    top: 90%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60%;
-    max-width: 700px;
-    background: rgba(0, 0, 0, 0.6);
-    padding: 30px;
-    border-radius: 15px;
-    text-align: center;
-    font-size: 1.2rem;
-    line-height: 1.6;
-    color: white;
-    backdrop-filter: blur(6px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-}
-/* Leaderboard styling */
-#leaderboard {
-    position: fixed;
-    top: 100px;
-    right: 20px;
-    background: rgba(0,0,0,0.7);
-    color: white;
-    padding: 15px;
-    border-radius: 10px;
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-#leaderboard-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-#leaderboard-list li {
-    padding: 5px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-/* Profile panel improvements */
-#profile-panel {
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.2);
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-    .middle-box {
-        width: 90%;
-        font-size: 1rem;
-    }
-    
-    #leaderboard {
-        position: static;
-        margin: 20px;
-    }
-    
-    header h1 {
-        font-size: 1.5rem;
-    }
-}
-
-/* Test Points Button Styling */
-#test-points-btn {
-    margin-top: 20px;
-    padding: 12px 24px;
-    background: linear-gradient(45deg, #667eea, #764ba2);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-}
-
-#test-points-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-    background: linear-gradient(45deg, #764ba2, #667eea);
-}
-
-#test-points-btn:active {
-    transform: translateY(0);
-}
-
-/* Admin Panel Tabs */
-.admin-tab {
-    flex: 1;
+.stat-item {
+    background: rgba(255, 255, 255, 0.1);
     padding: 8px 12px;
-    background: #2a2a2e;
-    color: white;
-    border: none;
-    border-radius: 5px 5px 0 0;
-    cursor: pointer;
-    font-size: 12px;
-    margin: 0 2px;
-}
-
-.admin-tab.active {
-    background: red;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
     font-weight: bold;
 }
 
-.admin-tab-content {
-    transition: all 0.3s ease;
+#user-points {
+    color: #4CAF50;
+    font-weight: bold;
 }
 
-/* Profile View Styling */
-.profile-view {
-    text-align: left;
+#user-souls {
+    color: #FFD700;
+    font-weight: bold;
 }
 
-.profile-picture {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin: 0 auto 10px;
-    display: block;
-    border: 2px solid #764ba2;
-}
-
-.profile-bio {
-    background: rgba(255,255,255,0.1);
-    padding: 10px;
-    border-radius: 5px;
-    margin: 10px 0;
-    min-height: 60px;
-}
-
-.profile-stats {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: #ccc;
-}
-
-.no-profile {
-    text-align: center;
-    color: #888;
-    font-style: italic;
-    padding: 20px;
+/* Make header responsive */
+@media (max-width: 768px) {
+    #user-stats {
+        flex-direction: column;
+        gap: 5px;
+        margin-left: 10px;
+    }
+    
+    .stat-item {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+    
+    #title {
+        font-size: 1.2rem;
+        margin-right: 10px !important;
+    }
 }
