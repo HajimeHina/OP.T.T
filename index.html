@@ -120,33 +120,61 @@
 </div>
 
     <!-- Admin Point Management Panel -->
-<div id="admin-panel" style="display:none; position:absolute; top:70px; right:10px; width:300px; background: rgba(0,0,0,0.9); color:white; padding:15px; border-radius: 10px; z-index:10; border: 2px solid red;">
+<!-- Admin Point Management Panel -->
+<div id="admin-panel" style="display:none; position:absolute; top:70px; right:10px; width:350px; background: rgba(0,0,0,0.9); color:white; padding:15px; border-radius: 10px; z-index:10; border: 2px solid red;">
     <h3 style="color: red; margin-bottom: 15px;">🔧 Admin Panel</h3>
     
-    <div style="margin-bottom: 15px;">
-        <label style="display: block; margin-bottom: 5px;">User:</label>
-        <select id="admin-user-select" style="width: 100%; padding: 8px; border-radius: 5px; background: #2a2a2e; color: white; border: 1px solid #444;">
-            <option value="">Select User</option>
-        </select>
+    <!-- Tabs for different admin functions -->
+    <div style="display: flex; margin-bottom: 15px; border-bottom: 1px solid #444;">
+        <button class="admin-tab active" data-tab="points">Points Management</button>
+        <button class="admin-tab" data-tab="profiles">View Profiles</button>
     </div>
     
-    <div style="margin-bottom: 15px;">
-        <label style="display: block; margin-bottom: 5px;">Action:</label>
-        <select id="admin-action" style="width: 100%; padding: 8px; border-radius: 5px; background: #2a2a2e; color: white; border: 1px solid #444;">
-            <option value="add">Add Points</option>
-            <option value="subtract">Subtract Points</option>
-            <option value="set">Set Points</option>
-        </select>
+    <!-- Points Management Tab -->
+    <div id="points-tab" class="admin-tab-content">
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px;">User:</label>
+            <select id="admin-user-select" style="width: 100%; padding: 8px; border-radius: 5px; background: #2a2a2e; color: white; border: 1px solid #444;">
+                <option value="">Select User</option>
+            </select>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px;">Action:</label>
+            <select id="admin-action" style="width: 100%; padding: 8px; border-radius: 5px; background: #2a2a2e; color: white; border: 1px solid #444;">
+                <option value="add">Add Points</option>
+                <option value="subtract">Subtract Points</option>
+                <option value="set">Set Points</option>
+            </select>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px;">Points:</label>
+            <input type="number" id="admin-points" value="10" style="width: 100%; padding: 8px; border-radius: 5px; background: #2a2a2e; color: white; border: 1px solid #444;">
+        </div>
+        
+        <div style="display: flex; gap: 10px;">
+            <button id="admin-apply" style="flex: 1; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Apply</button>
+            <button id="admin-close" style="flex: 1; padding: 10px; background: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer;">Close</button>
+        </div>
     </div>
     
-    <div style="margin-bottom: 15px;">
-        <label style="display: block; margin-bottom: 5px;">Points:</label>
-        <input type="number" id="admin-points" value="10" style="width: 100%; padding: 8px; border-radius: 5px; background: #2a2a2e; color: white; border: 1px solid #444;">
-    </div>
-    
-    <div style="display: flex; gap: 10px;">
-        <button id="admin-apply" style="flex: 1; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Apply</button>
-        <button id="admin-close" style="flex: 1; padding: 10px; background: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer;">Close</button>
+    <!-- View Profiles Tab -->
+    <div id="profiles-tab" class="admin-tab-content" style="display: none;">
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px;">Select User Profile:</label>
+            <select id="admin-profile-select" style="width: 100%; padding: 8px; border-radius: 5px; background: #2a2a2e; color: white; border: 1px solid #444;">
+                <option value="">Select User</option>
+            </select>
+        </div>
+        
+        <div id="admin-profile-view" style="background: rgba(42,42,46,0.5); padding: 15px; border-radius: 8px; min-height: 150px; max-height: 300px; overflow-y: auto;">
+            <div style="text-align: center; color: #888;">
+                Select a user to view their profile
+            </div>
+        </div>
+        
+        <button id="admin-close-profiles" style="width: 100%; padding: 10px; background: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;">Close</button>
     </div>
     
     <div id="admin-message" style="margin-top: 10px; font-size: 12px; min-height: 20px;"></div>
