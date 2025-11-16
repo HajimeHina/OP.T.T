@@ -210,6 +210,7 @@ else if (currentPage === 'index.html' || currentPage === '') {
 
 
 // ===== Admin Point Management =====
+// ===== Admin Point Management =====
 function setupAdminPanel() {
     const adminPanelBtn = document.getElementById('admin-panel-btn');
     const adminPanel = document.getElementById('admin-panel');
@@ -219,29 +220,73 @@ function setupAdminPanel() {
     const adminPointsInput = document.getElementById('admin-points');
     const adminActionSelect = document.getElementById('admin-action');
     const adminMessage = document.getElementById('admin-message');
+    
+    // Profile viewing elements
+    const adminProfileSelect = document.getElementById('admin-profile-select');
+    const adminProfileView = document.getElementById('admin-profile-view');
+    const adminCloseProfilesBtn = document.getElementById('admin-close-profiles');
+    const adminTabs = document.querySelectorAll('.admin-tab');
+    const adminTabContents = document.querySelectorAll('.admin-tab-content');
 
     // Show admin button only for admin user
     if (adminPanelBtn && loggedInUser === "admin") {
         adminPanelBtn.style.display = 'inline-block';
         
-        // Populate user dropdown
-        adminUserSelect.innerHTML = '<option value="">Select User</option>';
-        allUsers.forEach(user => {
-            const option = document.createElement('option');
-            option.value = user;
-            option.textContent = user;
-            adminUserSelect.appendChild(option);
-        });
+        // Populate user dropdowns
+        function populateUserDropdowns() {
+            adminUserSelect.innerHTML = '<option value="">Select User</option>';
+            adminProfileSelect.innerHTML = '<option value="">Select User</option>';
+            
+            allUsers.forEach(user => {
+                // Points management dropdown
+                const option1 = document.createElement('option');
+                option1.value = user;
+                option1.textContent = user;
+                adminUserSelect.appendChild(option1);
+                
+                // Profile viewing dropdown
+                const option2 = document.createElement('option');
+                option2.value = user;
+                option2.textContent = user;
+                adminProfileSelect.appendChild(option2);
+            });
+        }
+        
+        populateUserDropdowns();
 
         // Toggle admin panel
         adminPanelBtn.addEventListener('click', () => {
             adminPanel.style.display = adminPanel.style.display === 'none' ? 'block' : 'none';
+            // Refresh user lists when opening panel
+            populateUserDropdowns();
         });
 
-        // Close admin panel
+        // Tab switching
+        adminTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                adminTabs.forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Hide all tab contents
+                adminTabContents.forEach(content => content.style.display = 'none');
+                
+                // Show selected tab content
+                const tabName = tab.getAttribute('data-tab');
+                document.getElementById(`${tabName}-tab`).style.display = 'block';
+            });
+        });
+
+        // Close admin panel (points tab)
         adminCloseBtn.addEventListener('click', () => {
             adminPanel.style.display = 'none';
             adminMessage.textContent = '';
+        });
+
+        // Close admin panel (profiles tab)
+        adminCloseProfilesBtn.addEventListener('click', () => {
+            adminPanel.style.display = 'none';
         });
 
         // Apply points changes
@@ -299,6 +344,72 @@ function setupAdminPanel() {
                 console.error('Admin panel error:', error);
                 adminMessage.textContent = `❌ Error: ${error.message}`;
                 adminMessage.style.color = 'red';
+            }
+        });
+
+        // View user profiles
+        adminProfileSelect.addEventListener('change', async function() {
+            const selectedUser = this.value;
+            
+            if (!selectedUser) {
+                adminProfileView.innerHTML = '<div style="text-align: center; color: #888;">Select a user to view their profile</div>';
+                return;
+            }
+
+            try {
+                // Load profile data from localStorage
+                const profileData = JSON.parse(localStorage.getItem(`profile_${selectedUser}`)) || {};
+                
+                // Load points data from Firebase
+                const userRef = window.db_ref(window.db, 'leaderboard/' + selectedUser);
+                const snapshot = await window.db_get(userRef);
+                const pointsData = snapshot.val() || {};
+                const userPoints = pointsData.points || 0;
+
+                // Get UID
+                const users = {
+                    "Amr": "001",
+                    "002": "002", 
+                    "Kanamiz_Husband": "003",
+                    "Aizen_Husband": "004",
+                    "Mohamed": "005",
+                    "admin": "69",
+                    "TEST": "6969"
+                };
+                const userUID = users[selectedUser] || "000";
+
+                // Display profile
+                adminProfileView.innerHTML = `
+                    <div class="profile-view">
+                        <img src="${profileData.pic || 'https://via.placeholder.com/80'}" 
+                             alt="${selectedUser}'s Profile" 
+                             class="profile-picture">
+                        <h4 style="text-align: center; margin-bottom: 10px; color: #764ba2;">${selectedUser}</h4>
+                        
+                        <div class="profile-stats">
+                            <span>UID: ${userUID}</span>
+                            <span>Points: ${userPoints}</span>
+                        </div>
+                        
+                        <div class="profile-bio">
+                            <strong>Bio:</strong><br>
+                            ${profileData.bio || '<em>No bio set</em>'}
+                        </div>
+                        
+                        <div style="font-size: 11px; color: #888; text-align: center;">
+                            Last updated: ${profileData.bio ? 'Profile saved' : 'No profile data'}
+                        </div>
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                adminProfileView.innerHTML = `
+                    <div class="no-profile">
+                        ❌ Error loading profile for ${selectedUser}<br>
+                        <small>${error.message}</small>
+                    </div>
+                `;
             }
         });
     }
