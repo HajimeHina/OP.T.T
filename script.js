@@ -76,58 +76,105 @@ else if (currentPage === 'index.html' || currentPage === '') {
     }
 
     // ===== Profile Management =====
-    if (loggedInUser && document.getElementById('profile-panel')) {
-        const profilePic = document.getElementById('profile-pic');
-        const profilePanel = document.getElementById('profile-panel');
-        const picUpload = document.getElementById('pic-upload');
-        const bioInput = document.getElementById('bio');
-        const saveBtn = document.getElementById('save-profile');
-        const uidEl = document.getElementById('uid');
+    // ===== Profile Management =====
+if (loggedInUser && document.getElementById('profile-panel')) {
+    const profilePic = document.getElementById('profile-pic');
+    const profilePanel = document.getElementById('profile-panel');
+    const picUpload = document.getElementById('pic-upload');
+    const bioInput = document.getElementById('bio');
+    const saveBtn = document.getElementById('save-profile');
+    const uidEl = document.getElementById('uid');
 
-        const users = {
-            "Amr": "001",
-            "002": "002",
-            "Kanamiz_Husband": "003",
-            "Aizen_Husband": "004",
-            "Mohamed": "005",
-            "admin": "69",
-            "TEST": "6969"
-        };
-        
-        if (uidEl) uidEl.textContent = users[loggedInUser] || "000";
+    const users = {
+        "Amr": "001",
+        "002": "002",
+        "Kanamiz_Husband": "003",
+        "Aizen_Husband": "004",
+        "Mohamed": "005",
+        "admin": "69",
+        "TEST": "6969"
+    };
+    
+    if (uidEl) uidEl.textContent = users[loggedInUser] || "000";
 
-        // Load saved profile
-        const savedProfile = JSON.parse(localStorage.getItem(`profile_${loggedInUser}`)) || {};
-        if (savedProfile.pic) profilePic.src = savedProfile.pic;
-        if (savedProfile.bio && bioInput) bioInput.value = savedProfile.bio;
-
-        // Click profile pic to toggle panel
-        profilePic.addEventListener('click', () => {
-            profilePanel.style.display = profilePanel.style.display === 'none' ? 'block' : 'none';
-        });
-
-        // Upload new pic
-        picUpload.addEventListener('change', function() {
-            const file = this.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                profilePic.src = e.target.result;
-            }
-            reader.readAsDataURL(file);
-        });
-
-        // Save profile
-        saveBtn.addEventListener('click', () => {
-            const profileData = {
-                pic: profilePic.src,
-                bio: bioInput.value
-            };
-            localStorage.setItem(`profile_${loggedInUser}`, JSON.stringify(profileData));
-            alert('Profile saved successfully!');
-            profilePanel.style.display = 'none';
-        });
+    // Load saved profile from Firebase
+    async function loadProfile() {
+        try {
+            const profileRef = window.db_ref(window.db, 'profiles/' + loggedInUser);
+            const snapshot = await window.db_get(profileRef);
+            const profileData = snapshot.val() || {};
+            
+            if (profileData.pic) profilePic.src = profileData.pic;
+            if (profileData.bio && bioInput) bioInput.value = profileData.bio;
+            
+            console.log('Profile loaded from Firebase:', profileData);
+        } catch (error) {
+            console.error('Error loading profile from Firebase:', error);
+        }
     }
+
+    // Click profile pic to toggle panel
+    profilePic.addEventListener('click', () => {
+        profilePanel.style.display = profilePanel.style.display === 'none' ? 'block' : 'none';
+        loadProfile(); // Refresh profile data when opening panel
+    });
+
+    // Upload new pic and convert to Base64
+    picUpload.addEventListener('change', function() {
+        const file = this.files[0];
+        if (!file) return;
+
+        // Check if file is an image
+        if (!file.type.startsWith('image/')) {
+            alert('Please select an image file!');
+            return;
+        }
+
+        // Check file size (limit to 1MB to avoid large Base64 strings)
+        if (file.size > 1024 * 1024) {
+            alert('Please select an image smaller than 1MB!');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // Set the preview immediately
+            profilePic.src = e.target.result;
+        }
+        reader.onerror = function(error) {
+            console.error('Error reading file:', error);
+            alert('Error reading image file!');
+        }
+        reader.readAsDataURL(file);
+    });
+
+    // Save profile to Firebase (with Base64 image)
+    saveBtn.addEventListener('click', async () => {
+        try {
+            const profileRef = window.db_ref(window.db, 'profiles/' + loggedInUser);
+            
+            const profileData = {
+                pic: profilePic.src, // This is now Base64 string
+                bio: bioInput.value,
+                username: loggedInUser,
+                uid: users[loggedInUser] || "000",
+                lastUpdated: new Date().toISOString()
+            };
+            
+            await window.db_set(profileRef, profileData);
+            
+            alert('Profile saved successfully to database!');
+            profilePanel.style.display = 'none';
+            
+        } catch (error) {
+            console.error('Error saving profile to Firebase:', error);
+            alert('Error saving profile to database!');
+        }
+    });
+
+    // Load profile on page load
+    loadProfile();
+}
 
     // ===== Firebase Leaderboard =====
     function updateScore(username, points) {
@@ -178,7 +225,11 @@ else if (currentPage === 'index.html' || currentPage === '') {
 
 
     // Initialize leaderboard when DOM is loaded
-    document.addEventListener('DOMContentLoaded', function() {
+   // Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize profiles for all users (this runs once when page loads)
+    initializeUserProfiles();
+    
     // Load leaderboard and refresh every 2 seconds
     loadLeaderboard();
     setInterval(loadLeaderboard, 2000);
@@ -207,7 +258,6 @@ else if (currentPage === 'index.html' || currentPage === '') {
     }
 });
 }
-
 
 // ===== Admin Point Management =====
 // ===== Admin Point Management =====
@@ -348,77 +398,141 @@ function setupAdminPanel() {
         });
 
         // View user profiles
-        adminProfileSelect.addEventListener('change', async function() {
-            const selectedUser = this.value;
-            
-            if (!selectedUser) {
-                adminProfileView.innerHTML = '<div style="text-align: center; color: #888;">Select a user to view their profile</div>';
-                return;
-            }
-
-            try {
-                // Load profile data from localStorage
-                const profileData = JSON.parse(localStorage.getItem(`profile_${selectedUser}`)) || {};
-                
-                // Load points data from Firebase
-                const userRef = window.db_ref(window.db, 'leaderboard/' + selectedUser);
-                const snapshot = await window.db_get(userRef);
-                const pointsData = snapshot.val() || {};
-                const userPoints = pointsData.points || 0;
-
-                // Get UID
-                const users = {
-                    "Amr": "001",
-                    "002": "002", 
-                    "Kanamiz_Husband": "003",
-                    "Aizen_Husband": "004",
-                    "Mohamed": "005",
-                    "admin": "69",
-                    "TEST": "6969"
-                };
-                const userUID = users[selectedUser] || "000";
-
-                // Display profile
-                adminProfileView.innerHTML = `
-                    <div class="profile-view">
-                        <img src="${profileData.pic || 'https://via.placeholder.com/80'}" 
-                             alt="${selectedUser}'s Profile" 
-                             class="profile-picture">
-                        <h4 style="text-align: center; margin-bottom: 10px; color: #764ba2;">${selectedUser}</h4>
-                        
-                        <div class="profile-stats">
-                            <span>UID: ${userUID}</span>
-                            <span>Points: ${userPoints}</span>
-                        </div>
-                        
-                        <div class="profile-bio">
-                            <strong>Bio:</strong><br>
-                            ${profileData.bio || '<em>No bio set</em>'}
-                        </div>
-                        
-                        <div style="font-size: 11px; color: #888; text-align: center;">
-                            Last updated: ${profileData.bio ? 'Profile saved' : 'No profile data'}
-                        </div>
-                    </div>
-                `;
-
-            } catch (error) {
-                console.error('Error loading profile:', error);
-                adminProfileView.innerHTML = `
-                    <div class="no-profile">
-                        ❌ Error loading profile for ${selectedUser}<br>
-                        <small>${error.message}</small>
-                    </div>
-                `;
-            }
-        });
+       // View user profiles from Firebase
+adminProfileSelect.addEventListener('change', async function() {
+    const selectedUser = this.value;
+    
+    if (!selectedUser) {
+        adminProfileView.innerHTML = '<div style="text-align: center; color: #888;">Select a user to view their profile</div>';
+        return;
     }
-}
+
+    try {
+        // Load profile data from Firebase
+        const profileRef = window.db_ref(window.db, 'profiles/' + selectedUser);
+        const profileSnapshot = await window.db_get(profileRef);
+        const profileData = profileSnapshot.val() || {};
+        
+        // Load points data from Firebase
+        const pointsRef = window.db_ref(window.db, 'leaderboard/' + selectedUser);
+        const pointsSnapshot = await window.db_get(pointsRef);
+        const pointsData = pointsSnapshot.val() || {};
+        const userPoints = pointsData.points || 0;
+
+        // Get UID
+        const users = {
+            "Amr": "001",
+            "002": "002", 
+            "Kanamiz_Husband": "003",
+            "Aizen_Husband": "004",
+            "Mohamed": "005",
+            "admin": "69",
+            "TEST": "6969"
+        };
+        const userUID = users[selectedUser] || "000";
+
+        // Format last updated time
+        let lastUpdated = 'Never';
+        if (profileData.lastUpdated) {
+            lastUpdated = new Date(profileData.lastUpdated).toLocaleString();
+        }
+
+        // Check if image is Base64 (starts with data:image)
+        const isBase64Image = profileData.pic && profileData.pic.startsWith('data:image');
+        
+        // Display profile
+        adminProfileView.innerHTML = `
+            <div class="profile-view">
+                <img src="${profileData.pic || 'https://via.placeholder.com/80'}" 
+                     alt="${selectedUser}'s Profile" 
+                     class="profile-picture"
+                     style="width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 10px; display: block; border: 2px solid #764ba2;">
+                <h4 style="text-align: center; margin-bottom: 10px; color: #764ba2;">${selectedUser}</h4>
+                
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #ccc; margin-bottom: 10px;">
+                    <span>UID: ${profileData.uid || userUID}</span>
+                    <span>Points: ${userPoints}</span>
+                </div>
+                
+                <div class="profile-bio" style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px; margin: 10px 0; min-height: 60px;">
+                    <strong>Bio:</strong><br>
+                    ${profileData.bio || '<em style="color: #888;">No bio set</em>'}
+                </div>
+                
+                <div style="font-size: 11px; color: #888; text-align: center;">
+                    Last updated: ${lastUpdated}
+                </div>
+                
+                ${isBase64Image ? `
+                <div style="font-size: 10px; color: #4CAF50; text-align: center; margin-top: 5px;">
+                    ✅ Custom image (Base64)
+                </div>
+                ` : profileData.pic ? `
+                <div style="font-size: 10px; color: #666; text-align: center; margin-top: 5px;">
+                    🔗 External image
+                </div>
+                ` : ''}
+            </div>
+        `;
+
+    } catch (error) {
+        console.error('Error loading profile:', error);
+        adminProfileView.innerHTML = `
+            <div style="text-align: center; color: #888; padding: 20px;">
+                ❌ Error loading profile for ${selectedUser}<br>
+                <small>${error.message}</small>
+            </div>
+        `;
+    }
+});
+    
 
 // Also update the reset leaderboard button to show for admin
 if (loggedInUser === "admin") {
     const resetBtn = document.getElementById('reset-leaderboard');
     if (resetBtn) {
         resetBtn.style.display = 'inline-block';
+    }
+}
+
+    }}
+
+    // ===== Initialize Default Profiles =====
+async function initializeUserProfiles() {
+    const users = {
+        "Amr": "001",
+        "002": "002",
+        "Kanamiz_Husband": "003",
+        "Aizen_Husband": "004",
+        "Mohamed": "005",
+        "admin": "69",
+        "TEST": "6969"
+    };
+
+    try {
+        console.log('Checking and initializing user profiles...');
+        
+        for (const [username, uid] of Object.entries(users)) {
+            const profileRef = window.db_ref(window.db, 'profiles/' + username);
+            const snapshot = await window.db_get(profileRef);
+            
+            // If profile doesn't exist, create default one
+            if (!snapshot.exists()) {
+                await window.db_set(profileRef, {
+                    username: username,
+                    uid: uid,
+                    pic: 'https://via.placeholder.com/80?text=' + username,
+                    bio: '',
+                    created: new Date().toISOString(),
+                    lastUpdated: new Date().toISOString()
+                });
+                console.log(`✅ Created default Firebase profile for ${username}`);
+            } else {
+                console.log(`✅ Profile already exists for ${username}`);
+            }
+        }
+        console.log('Profile initialization completed!');
+    } catch (error) {
+        console.error('❌ Error initializing Firebase profiles:', error);
     }
 }
