@@ -87,7 +87,7 @@
 <header>
     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
         <div id="profile-container" style="display: flex; align-items: center;">
-            <img id="profile-pic" src="https://via.placeholder.com/50" alt="Profile Picture" style="width:50px; height:50px; border-radius:50%; margin-right:10px; cursor:pointer;">
+            <img id="profile-pic" src="https://via.placeholder.com/50?text=Loading" alt="Profile Picture" style="width:50px; height:50px; border-radius:50%; margin-right:10px; cursor:pointer;">
             <span id="user-info"></span>
             
             <!-- User Stats Container -->
@@ -109,8 +109,13 @@
             <nav>
                 <a href="subjects.html">Subjects</a>
                 <a href="quiz.html">Quiz</a>
+                <a href="souls.html" style="background: linear-gradient(45deg, #FFD700, #FFA500); color: black; font-weight: bold;">💎 Souls Shop</a>
             </nav>
             
+            <button id="wallpaper-inventory-btn" style="margin-left: 15px; padding: 8px 16px; background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+            🎒 Inventory
+            </button>
+
             <!-- Add Admin Panel Button -->
             <button id="admin-panel-btn" style="display:none; margin-left: 15px; padding: 8px 16px; background: red; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
                 Admin Panel
@@ -133,7 +138,8 @@
     <button id="save-profile" style="width:100%; padding:8px; border:none; border-radius:5px; background:#2a2a2e; color:white; cursor:pointer; margin-top:10px;">Save Profile</button>
 </div>
 
-    <!-- Admin Point Management Panel -->
+
+<!-- Admin Point Management Panel -->
 <!-- Admin Point Management Panel -->
 <!-- Admin Panel -->
 <div id="admin-panel" style="display:none; position:absolute; top:70px; right:10px; width:350px; background: rgba(0,0,0,0.9); color:white; padding:15px; border-radius: 10px; z-index:10; border: 2px solid red;">
@@ -215,6 +221,34 @@
     <div id="admin-message" style="margin-top: 10px; font-size: 12px; min-height: 20px;"></div>
 </div>
 
+        <!-- Wallpaper Inventory Panel -->
+<!-- Comprehensive Inventory Panel -->
+<div id="inventory-panel" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:600px; background: rgba(0,0,0,0.95); color:white; padding:20px; border-radius: 15px; z-index:20; border: 3px solid #764ba2; max-height: 80vh; overflow-y: auto;">
+    <h3 style="color: #764ba2; margin-bottom: 15px; text-align: center;">🎒 My Inventory</h3>
+    
+    <!-- Inventory Tabs -->
+    <div style="display: flex; margin-bottom: 15px; border-bottom: 1px solid #444;">
+        <button class="inventory-tab active" data-tab="wallpapers">Wallpapers</button>
+        <button class="inventory-tab" data-tab="frames">Profile Frames</button>
+        <button class="inventory-tab" data-tab="badges">Badges</button>
+        <button class="inventory-tab" data-tab="boosts">Boosts</button>
+    </div>
+    
+    <!-- Inventory Content -->
+    <div id="inventory-content" style="min-height: 300px;">
+        <!-- Content will be dynamically loaded here -->
+    </div>
+    
+    <div style="text-align: center; margin-top: 20px;">
+        <button id="close-inventory" style="padding: 10px 20px; background: #f44336; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px;">Close</button>
+    </div>
+</div>
+
+<!-- Add Wallpaper Inventory button to header -->
+<!-- Add this to your header navigation, after the Souls Shop button -->
+
+
+
     <section class="hero">
         <h2 class="Header">Welcome to Operation.Talta.Thanawy</h2>
         <p class="under-header">Choose subjects, answer questions, and rise in the rankings.</p>
@@ -224,15 +258,16 @@
         <p>Hello. You’re probably confused about what’s happening right now, so let me explain.<br><br>
         Let’s be honest… we haven’t exactly been studying seriously, soooo…<br><br>
         This website was created by me and my wife, Hina.<br><br>
-     Only the people I approve can access it, and I will personally add the questions.<br><br>
+        Only the people I approve can access it, and I will personally add the questions.<br><br>
+        I will also Create Some Questions But If It's not me who created the question it will be stated otherwise.<br></br>
         After answering questions, you will earn points and a currency to use in the souls shop.<br><br>
         The more points you have, the higher you climb on the leaderboard.</p>
     </div>
 
-        <div id="leaderboard" style="position:fixed; top:100px; right:20px; background: rgba(0,0,0,0.7); color:white;            padding:15px; border-radius:10px;">
-            <h3>Leaderboard</h3>
-            <ul id="leaderboard-list"></ul>
-        </div>
+        <div id="leaderboard" style="position:fixed; top:100px; right:20px; background: rgba(0,0,0,0.7); color:white; padding:15px; border-radius:10px; z-index: 100;">
+    <h3>Leaderboard</h3>
+    <ul id="leaderboard-list"></ul>
+</div>
             
 
         <!-- Firebase -->
