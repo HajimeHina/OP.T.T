@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Souls Shop - Operation Talta Thanawy</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html { width: 100%; height: 100%; }
+
+        /* Background video container */
+        #video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        #video-bg video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        body {
+        font-family: Arial, sans-serif;
+        }
+
+
+
+        header {
+            position: relative;
+            z-index: 5;
+            width: 100%;
+            padding: 20px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header nav a {
+            color: white;
+            margin-left: 15px;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        #logout-btn {
+            margin-left: 15px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid white;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        #logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Shop Styles */
+        .shop-container {
+            position: relative;
+            z-index: 5;
+            max-width: 1200px;
+            margin: 100px auto 50px;
+            padding: 20px;
+        }
+
+        .shop-header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+            text-shadow: 0 0 10px black;
+        }
+
+        .shop-header h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    color: blueviolet;
+    text-shadow: 0 0 10px black;
+}
+
+        .user-balance {
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #FFD700;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #FFD700;
+            margin: 10px 0;
+        }
+
+        .shop-categories {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid #764ba2;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .category-btn.active, .category-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .shop-items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .shop-item {
+            background: rgba(0,0,0,0.7);
+            border: 2px solid #333;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .shop-item:hover {
+            border-color: #764ba2;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .shop-item.featured {
+            border-color: #FFD700;
+            background: rgba(255,215,0,0.1);
+        }
+
+        .item-preview {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .item-name {
+            font-size: 1.3rem;
+            color: white;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .item-description {
+            color: #ccc;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .item-price {
+            font-size: 1.5rem;
+            color: #FFD700;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .buy-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .buy-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .buy-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .buy-btn.owned {
+            background: linear-gradient(45deg, #764ba2, #667eea);
+        }
+
+        .item-rarity {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .rarity-common { background: #4CAF50; color: white; }
+        .rarity-rare { background: #2196F3; color: white; }
+        .rarity-epic { background: #9C27B0; color: white; }
+        .rarity-legendary { background: #FF9800; color: black; }
+
+        /* User Stats in Header */
+        #user-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            font-weight: bold;
+        }
+
+        #user-points { color: #4CAF50; }
+        #user-souls { color: #FFD700; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .shop-items-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .shop-header h1 {
+                font-size: 2rem;
+            }
+            
+            .user-balance {
+                padding: 15px;
+            }
+            
+            .balance-amount {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background Video -->
+    <div id="video-bg">
+        <video id="bg-video" autoplay muted loop>
+            <source src="https://hajimehina.github.io/Jingliu_eclipse/jingliu-eclipse-of-the-moon.3840x2160.mp4" type="video/mp4"> 
+        </video>
+    </div>
+
+    <header>
+        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+            <div id="profile-container" style="display: flex; align-items: center;">
+                <img id="profile-pic" src="https://via.placeholder.com/50?text=Loading" alt="Profile Picture" style="width:50px; height:50px; border-radius:50%; margin-right:10px; cursor:pointer;">
+                <span id="user-info" style="color: white; font-size: 16px;"></span>
+                
+                <!-- User Stats Container -->
+                <div id="user-stats" style="display: flex; align-items: center; margin-left: 20px; gap: 15px; font-size: 14px;">
+                    <div class="stat-item">
+                        <span style="color: #4CAF50;">🏆 </span>
+                        <span id="user-points">0</span> pts
+                    </div>
+                    <div class="stat-item">
+                        <span style="color: #FFD700;">💎 </span>
+                        <span id="user-souls">0</span> Souls
+                    </div>
+                </div>
+            </div>
+            
+            <h1 id="title" style="color: white; margin-right: 100px;">Souls Shop</h1>
+            
+            <div style="display: flex; align-items: center;">
+                <nav>
+                    <a href="index.html">Home</a>
+                    <a href="subjects.html">Subjects</a>
+                    <a href="quiz.html">Quiz</a>
+                    <a href="souls.html" style="background: linear-gradient(45deg, #FFD700, #FFA500); color: black; font-weight: bold;">💎 Souls Shop</a>
+                </nav>
+                <button id="logout-btn">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="shop-container">
+        <div class="shop-header">
+            <h1>💎 Souls Shop</h1>
+            <p style="font-size: 1.2rem; color: #ccc;">Spend your hard-earned souls on awesome items!</p>
+        </div>
+
+        <div class="user-balance">
+            <h3 style="color: white; margin-bottom: 10px;">Your Soul Balance</h3>
+            <div class="balance-amount" id="balance-display">0 💎</div>
+            <p style="color: #ccc;">Earn more souls by answering quiz questions!</p>
+        </div>
+
+        <div class="shop-categories">
+    <button class="category-btn active" data-category="all">All Items</button>
+    <button class="category-btn" data-category="wallpapers">Wallpapers</button>
+    <button class="category-btn" data-category="profile_frames">Profile Frames</button>
+    <button class="category-btn" data-category="badges">Badges</button>
+    <button class="category-btn" data-category="boosts">Boosts</button>
+</div>
+
+        <div class="shop-items-grid" id="shop-items">
+            <!-- Items will be dynamically loaded here -->
+        </div>
+    </div>
+
+    <!-- Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+        import { getDatabase, ref, get, update, set } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA9b-GTzHViwe1oMfcOQ8ALlUzSv3sYN34",
+            authDomain: "optt-e8408.firebaseapp.com",
+            databaseURL: "https://optt-e8408-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "optt-e8408",
+            storageBucket: "optt-e8408.firebasestorage.app",
+            messagingSenderId: "651475709344",
+            appId: "1:651475709344:web:aa7890a2ae1616989048c5",
+            measurementId: "G-9DEX2EKTSP"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const database = getDatabase(app);
+        
+        window.db = database;
+        window.db_ref = ref;
+        window.db_get = get;
+        window.db_update = update;
+        window.db_set = set;
+    </script>
+
+    <script>
+// Shop items data
+const shopItems = {
+    "wallpapers": [
+        {
+            id: "arona",
+            name: "Arona Classroom",
+            description: "Arona in a destroyed classroom after the catastrophe",
+            price: 100,
+            rarity: "epic",
+            type: "wallpaper",
+            previewUrl: "https://hajimehina.github.io/blindfolded_girl/Screenshot%202025-11-17%20081621.png",
+            videoUrl: "https://hajimehina.github.io/blindfolded_girl/arona-classroom-sky-blue-archive-moewalls-com.mp4"
+        }
+    ],
+    "profile_frames": [],
+    "badges": [],
+    "boosts": []
+};
+
+// Global variables
+let loggedInUser = sessionStorage.getItem('loggedInUser');
+let userSouls = 0;
+let userInventory = {};
+
+// Check authentication
+if (!loggedInUser) {
+    window.location.href = 'login.html';
+}
+
+// Display user info
+function displayUserInfo() {
+    const userInfoEl = document.getElementById('user-info');
+    if (userInfoEl && loggedInUser) {
+        userInfoEl.textContent = `Welcome, ${loggedInUser}!`;
+    }
+}
+
+// Load user profile picture
+async function loadUserProfile() {
+    if (!loggedInUser) return;
+    
+    try {
+        const profileRef = window.db_ref(window.db, 'profiles/' + loggedInUser);
+        const snapshot = await window.db_get(profileRef);
+        const profileData = snapshot.val() || {};
+        
+        const profilePic = document.getElementById('profile-pic');
+        if (profilePic && profileData.pic) {
+            profilePic.src = profileData.pic;
+            console.log('Profile picture loaded:', profileData.pic);
+        }
+        
+    } catch (error) {
+        console.error('Error loading profile picture:', error);
+    }
+}
+
+// Load user stats
+async function loadUserStats() {
+    if (!loggedInUser) return;
+    
+    try {
+        const userRef = window.db_ref(window.db, 'leaderboard/' + loggedInUser);
+        const snapshot = await window.db_get(userRef);
+        const userData = snapshot.val() || {};
+        
+        userSouls = userData.souls || 0;
+        
+        console.log(`User souls updated: ${userSouls}`);
+        
+        // Update display
+        const pointsElement = document.getElementById('user-points');
+        const soulsElement = document.getElementById('user-souls');
+        const balanceDisplay = document.getElementById('balance-display');
+        
+        if (pointsElement) pointsElement.textContent = userData.points || 0;
+        if (soulsElement) soulsElement.textContent = userSouls;
+        if (balanceDisplay) balanceDisplay.textContent = `${userSouls.toLocaleString()} 💎`;
+        
+        // Refresh shop items to update purchase buttons
+        const activeCategory = document.querySelector('.category-btn.active')?.dataset.category || 'all';
+        displayShopItems(activeCategory);
+        
+    } catch (error) {
+        console.error('Error loading user stats:', error);
+    }
+}
+
+// Load user inventory
+async function loadUserInventory() {
+    if (!loggedInUser) return;
+    
+    try {
+        // Load all inventory types
+        const inventoryPromises = [
+            window.db_get(window.db_ref(window.db, 'wallpaperInventory/' + loggedInUser)),
+            window.db_get(window.db_ref(window.db, 'profileFrames/' + loggedInUser)),
+            window.db_get(window.db_ref(window.db, 'badges/' + loggedInUser)),
+            window.db_get(window.db_ref(window.db, 'boosts/' + loggedInUser))
+        ];
+        
+        const results = await Promise.all(inventoryPromises);
+        
+        // Combine all inventories
+        userInventory = {
+            ...(results[0].val() || {}),
+            ...(results[1].val() || {}),
+            ...(results[2].val() || {}),
+            ...(results[3].val() || {})
+        };
+        
+        console.log('User inventory loaded:', userInventory);
+        
+        // Refresh shop display with ownership info
+        const activeCategory = document.querySelector('.category-btn.active')?.dataset.category || 'all';
+        displayShopItems(activeCategory);
+        
+    } catch (error) {
+        console.error('Error loading user inventory:', error);
+        userInventory = {};
+    }
+}
+
+// Load and sync equipped wallpaper
+async function loadEquippedWallpaper() {
+    if (!loggedInUser) return;
+    
+    try {
+        const userRef = window.db_ref(window.db, 'users/' + loggedInUser);
+        const snapshot = await window.db_get(userRef);
+        const userData = snapshot.val() || {};
+        
+        const equippedWallpaper = userData.equippedWallpaper || 'jingliu';
+        
+        // Define available wallpapers (same as homepage)
+        const availableWallpapers = {
+            "jingliu": {
+                videoUrl: "https://hajimehina.github.io/Jingliu_eclipse/jingliu-eclipse-of-the-moon.3840x2160.mp4"
+            },
+            "arona": {
+                videoUrl: "https://hajimehina.github.io/blindfolded_girl/arona-classroom-sky-blue-archive-moewalls-com.mp4"
+            }
+        };
+        
+        const wallpaper = availableWallpapers[equippedWallpaper];
+        if (wallpaper) {
+            const videoElement = document.getElementById('bg-video');
+            const sourceElement = videoElement.querySelector('source');
+            if (sourceElement && sourceElement.src !== wallpaper.videoUrl) {
+                sourceElement.src = wallpaper.videoUrl;
+                videoElement.load();
+                console.log('Wallpaper synced to:', equippedWallpaper);
+            }
+        }
+        
+    } catch (error) {
+        console.error('Error loading equipped wallpaper:', error);
+    }
+}
+
+// Listen for wallpaper changes in real-time
+function setupWallpaperSync() {
+    if (!loggedInUser) return;
+    setInterval(loadEquippedWallpaper, 3000); // Check every 3 seconds
+}
+
+// Display shop items
+function displayShopItems(category) {
+    const shopGrid = document.getElementById('shop-items');
+    if (!shopGrid) return;
+    
+    shopGrid.innerHTML = '';
+    
+    let itemsToShow = [];
+    
+    if (category === 'all') {
+        Object.values(shopItems).forEach(categoryItems => {
+            itemsToShow = itemsToShow.concat(categoryItems);
+        });
+    } else {
+        itemsToShow = shopItems[category] || [];
+    }
+    
+    itemsToShow.forEach(item => {
+        const isOwned = userInventory[item.id];
+        const canAfford = userSouls >= item.price;
+        
+        const itemElement = document.createElement('div');
+        itemElement.className = `shop-item ${item.rarity === 'legendary' ? 'featured' : ''}`;
+        
+        itemElement.innerHTML = `
+            <div class="item-rarity rarity-${item.rarity}">${item.rarity.toUpperCase()}</div>
+            <img src="${item.previewUrl}" alt="${item.name}" class="item-preview">
+            <div class="item-name">${item.name}</div>
+            <div class="item-description">${item.description}</div>
+            ${item.duration ? `<div style="color: #4CAF50; margin-bottom: 10px; font-size: 0.9rem;">⏰ ${item.duration}</div>` : ''}
+            <div class="item-price">${item.price} 💎</div>
+            <button class="buy-btn ${isOwned ? 'owned' : ''}" 
+                    data-item-id="${item.id}" 
+                    data-item-price="${item.price}"
+                    data-item-type="${item.type}"
+                    ${isOwned ? 'disabled' : !canAfford ? 'disabled' : ''}>
+                ${isOwned ? '✅ Owned' : !canAfford ? 'Not Enough Souls' : 'Purchase'}
+            </button>
+        `;
+        
+        shopGrid.appendChild(itemElement);
+    });
+    
+    // Add event listeners to buy buttons
+    document.querySelectorAll('.buy-btn:not(:disabled)').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const itemId = e.target.dataset.itemId;
+            const itemPrice = parseInt(e.target.dataset.itemPrice);
+            const itemType = e.target.dataset.itemType;
+            purchaseItem(itemId, itemPrice, itemType);
+        });
+    });
+}
+
+// Setup category filters
+function setupCategoryFilters() {
+    document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            // Remove active class from all buttons
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+            // Add active class to clicked button
+            e.target.classList.add('active');
+            // Display items for selected category
+            displayShopItems(e.target.dataset.category);
+        });
+    });
+}
+
+// Helper function to get item by ID
+function getItemById(itemId) {
+    for (const [category, items] of Object.entries(shopItems)) {
+        const item = items.find(i => i.id === itemId);
+        if (item) return item;
+    }
+    return null;
+}
+
+// Purchase item
+async function purchaseItem(itemId, price, itemType) {
+    if (!loggedInUser) return;
+    
+    if (userSouls < price) {
+        alert('Not enough souls to purchase this item!');
+        return;
+    }
+    
+    // Get item details for confirmation message
+    const item = getItemById(itemId);
+    if (!item) {
+        alert('Item not found!');
+        return;
+    }
+    
+    if (!confirm(`Are you sure you want to purchase "${item.name}" for ${price} souls?`)) {
+        return;
+    }
+    
+    try {
+        console.log(`Starting purchase: ${itemId}, ${price} souls, type: ${itemType}`);
+        
+        // Deduct souls first
+        const newSouls = userSouls - price;
+        console.log(`Deducting souls: ${userSouls} - ${price} = ${newSouls}`);
+        
+        await window.db_update(window.db_ref(window.db, 'leaderboard/' + loggedInUser), {
+            souls: newSouls
+        });
+        
+        console.log('Souls deducted successfully');
+        
+        // Determine the correct inventory path based on item type
+        let inventoryPath;
+        switch(itemType) {
+            case 'wallpaper':
+                inventoryPath = `wallpaperInventory/${loggedInUser}/${itemId}`;
+                break;
+            case 'profile_frame':
+                inventoryPath = `profileFrames/${loggedInUser}/${itemId}`;
+                break;
+            case 'badge':
+                inventoryPath = `badges/${loggedInUser}/${itemId}`;
+                break;
+            case 'boost':
+                inventoryPath = `boosts/${loggedInUser}/${itemId}`;
+                break;
+            default:
+                console.error('Unknown item type:', itemType);
+                inventoryPath = `inventory/${loggedInUser}/${itemId}`;
+        }
+        
+        console.log('Inventory path:', inventoryPath);
+        
+        // Prepare item data
+        const itemData = {
+            purchased: new Date().toISOString(),
+            price: price,
+            type: itemType,
+            name: item.name,
+            rarity: item.rarity,
+            previewUrl: item.previewUrl
+        };
+        
+        // Add optional fields if they exist
+        if (item.description) itemData.description = item.description;
+        if (item.videoUrl) itemData.videoUrl = item.videoUrl;
+        if (item.duration) itemData.duration = item.duration;
+        
+        console.log('Item data to save:', itemData);
+        
+        // Add to inventory
+        const inventoryRef = window.db_ref(window.db, inventoryPath);
+        await window.db_set(inventoryRef, itemData);
+        
+        console.log('Item saved to inventory successfully');
+        
+        alert(`🎉 Purchase successful! ${item.name} has been added to your inventory.`);
+        
+        // Refresh displays
+        await loadUserStats();
+        await loadUserInventory();
+        
+        console.log('Purchase completed successfully');
+        
+    } catch (error) {
+        console.error('Error purchasing item:', error);
+        console.error('Error details:', {
+            itemId,
+            price, 
+            itemType,
+            userSouls,
+            loggedInUser
+        });
+        alert(`❌ Error purchasing item: ${error.message}`);
+    }
+}
+
+// Setup logout
+function setupLogout() {
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function() {
+            sessionStorage.removeItem('loggedInUser');
+            window.location.href = 'login.html';
+        });
+    }
+}
+
+// SINGLE DOMContentLoaded event listener
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('Initializing Souls Shop...');
+    
+    displayUserInfo();
+    await loadUserProfile();
+    await loadUserStats();
+    await loadUserInventory();
+    await loadEquippedWallpaper();
+    displayShopItems('all');
+    setupCategoryFilters();
+    setupLogout();
+    setupWallpaperSync();
+    
+    // Refresh stats every 5 seconds
+    setInterval(loadUserStats, 5000);
+});
+
+// Make shop items available globally for the inventory system
+window.shopItems = shopItems;
+</script>
+</body>
+</html>
