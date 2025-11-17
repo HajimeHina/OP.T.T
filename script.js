@@ -13,7 +13,7 @@ const availableItems = {
         "jingliu": {
             name: "🌙 Jingliu Eclipse",
             videoUrl: "https://hajimehina.github.io/Jingliu_eclipse/jingliu-eclipse-of-the-moon.3840x2160.mp4",
-            previewUrl: "https://via.placeholder.com/200x100/764ba2/white?text=Jingliu+Eclipse",
+            previewUrl: "https://hajimehina.github.io/Jingliu_eclipse/video-capture-t0000.00seg-6889.png",
             rarity: "Epic",
             type: "wallpaper"
         },
@@ -475,15 +475,19 @@ else if (currentPage === 'index.html' || currentPage === '') {
             });
             
             // If it's a wallpaper, change the background
-            if (type === 'wallpapers') {
-                const wallpaper = availableItems.wallpapers[itemId];
-                if (wallpaper) {
-                    const videoElement = document.getElementById('bg-video');
-                    const sourceElement = videoElement.querySelector('source');
-                    sourceElement.src = wallpaper.videoUrl;
-                    videoElement.load();
-                }
-            }
+    // In the equipItem function, update the wallpaper section:
+if (type === 'wallpapers') {
+    const wallpaper = availableItems.wallpapers[itemId];
+    if (wallpaper) {
+        try {
+            await setWallpaperVideo(wallpaper);
+            console.log(`✅ Equipped wallpaper: ${wallpaper.name}`);
+        } catch (error) {
+            console.error('Failed to set wallpaper:', error);
+            alert('❌ Failed to load wallpaper video!');
+        }
+    }
+}
             
             // Show success message
             const itemInfo = getItemInfo(itemId, type);
@@ -787,30 +791,93 @@ else if (currentPage === 'index.html' || currentPage === '') {
     }
 
     // ===== Load Equipped Items =====
-    async function loadEquippedItems() {
-        if (!loggedInUser) return;
+    // ===== Load Equipped Items =====
+// ===== Load Equipped Items =====
+async function loadEquippedItems() {
+    if (!loggedInUser) return;
+    
+    try {
+        const userRef = window.db_ref(window.db, 'users/' + loggedInUser);
+        const snapshot = await window.db_get(userRef);
+        const userData = snapshot.val() || {};
         
-        try {
-            const userRef = window.db_ref(window.db, 'users/' + loggedInUser);
-            const snapshot = await window.db_get(userRef);
-            const userData = snapshot.val() || {};
-            
-            const equippedWallpaper = userData.equippedWallpaper || 'jingliu';
-            const wallpaper = availableItems.wallpapers[equippedWallpaper];
-            
-            if (wallpaper) {
-                const videoElement = document.getElementById('bg-video');
-                const sourceElement = videoElement.querySelector('source');
-                if (sourceElement.src !== wallpaper.videoUrl) {
-                    sourceElement.src = wallpaper.videoUrl;
-                    videoElement.load();
-                }
-            }
-            
-        } catch (error) {
-            console.error('Error loading equipped items:', error);
+        const equippedWallpaper = userData.equippedWallpaper || 'jingliu';
+        const wallpaper = availableItems.wallpapers[equippedWallpaper];
+        
+        if (wallpaper) {
+            await setWallpaperVideo(wallpaper);
+            console.log(`✅ Loaded equipped wallpaper: ${wallpaper.name}`);
         }
+        
+    } catch (error) {
+        console.error('Error loading equipped items:', error);
+        // Fallback to default wallpaper
+        const defaultWallpaper = availableItems.wallpapers.jingliu;
+        await setWallpaperVideo(defaultWallpaper);
     }
+}
+
+// Set wallpaper video with proper loading
+async function setWallpaperVideo(wallpaper) {
+    return new Promise((resolve, reject) => {
+        const videoElement = document.getElementById('bg-video');
+        
+        // Clear existing sources
+        videoElement.innerHTML = '';
+        
+        // Create new source element
+        const sourceElement = document.createElement('source');
+        sourceElement.src = wallpaper.videoUrl;
+        sourceElement.type = 'video/mp4';
+        
+        videoElement.appendChild(sourceElement);
+        videoElement.style.display = 'block';
+        
+        // Wait for video to load
+        videoElement.addEventListener('loadeddata', function() {
+            console.log('✅ Video loaded successfully');
+            videoElement.play().then(() => {
+                console.log('✅ Video playing');
+                resolve();
+            }).catch(error => {
+                console.error('Video play failed:', error);
+                reject(error);
+            });
+        });
+        
+        videoElement.addEventListener('error', function(e) {
+            console.error('Video loading error:', e);
+            reject(new Error('Video failed to load'));
+        });
+        
+        videoElement.load();
+        
+        // Fallback if video doesn't load within 5 seconds
+        setTimeout(() => {
+            if (videoElement.readyState < 2) { // HAVE_CURRENT_DATA or better
+                console.warn('Video loading timeout, forcing display');
+                videoElement.style.display = 'block';
+                resolve();
+            }
+        }, 5000);
+    });
+}
+
+// Fallback to default wallpaper if there's an error
+function loadDefaultWallpaper() {
+    const videoElement = document.getElementById('bg-video');
+    const sourceElement = document.createElement('source');
+    const defaultWallpaper = availableItems.wallpapers.jingliu;
+    
+    sourceElement.src = defaultWallpaper.videoUrl;
+    sourceElement.type = 'video/mp4';
+    videoElement.innerHTML = '';
+    videoElement.appendChild(sourceElement);
+    videoElement.style.display = 'block';
+    videoElement.load();
+    
+    console.log('✅ Loaded default wallpaper as fallback');
+}
 
     // ===== Admin Management =====
     function setupAdminPanel() {
@@ -884,42 +951,82 @@ else if (currentPage === 'index.html' || currentPage === '') {
     }
 
     // ===== Initialize Everything =====
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Initializing application...');
-        
-        // Initialize profiles for all users
-        initializeUserProfiles().then(() => {
-            console.log('User profiles initialized, now setting up other features...');
-            
-            // Initialize default items
-            initializeDefaultItems().then(() => {
-                // Initialize profile management with a delay to ensure Firebase is ready
-                setTimeout(() => {
-                    initializeProfileManagement();
-                }, 1500);
-                
-                // Initialize comprehensive inventory system
-                initializeInventorySystem();
-                
-                // Load equipped items
-                loadEquippedItems();
-            });
-            
-            // Load user stats
-            loadUserStats();
-            
-            // Refresh stats every 3 seconds
-            setInterval(loadUserStats, 3000);
-            
-            // Load leaderboard and refresh every 2 seconds
-            loadLeaderboard();
-            setInterval(loadLeaderboard, 2000);
+    // ===== Initialize Everything =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing application...');
+    
 
-            // Setup admin panel if user is admin
-            setupAdminPanel();
+    setupVideoErrorHandling();
+    // Load equipped items FIRST before anything else
+    loadEquippedItems();
+    
+    // Then initialize everything else
+    initializeUserProfiles().then(() => {
+        console.log('User profiles initialized, now setting up other features...');
+        
+        // Initialize default items
+        initializeDefaultItems().then(() => {
+            // Initialize profile management with a delay to ensure Firebase is ready
+            setTimeout(() => {
+                initializeProfileManagement();
+            }, 1500);
             
-            // Setup infinite souls for admin
-            setupAdminInfiniteSouls();
+            // Initialize comprehensive inventory system
+            initializeInventorySystem();
         });
+        
+        // Load user stats
+        loadUserStats();
+        
+        // Refresh stats every 3 seconds
+        setInterval(loadUserStats, 3000);
+        
+        // Load leaderboard and refresh every 2 seconds
+        loadLeaderboard();
+        setInterval(loadLeaderboard, 2000);
+
+        // Setup admin panel if user is admin
+        setupAdminPanel();
+        
+        // Setup infinite souls for admin
+        setupAdminInfiniteSouls();
     });
+});
+
+// Video error handling
+// Enhanced video error handling
+function setupVideoErrorHandling() {
+    const videoElement = document.getElementById('bg-video');
+    if (videoElement) {
+        videoElement.addEventListener('error', function(e) {
+            console.error('Video error:', e);
+            console.error('Video error details:', {
+                error: videoElement.error,
+                networkState: videoElement.networkState,
+                readyState: videoElement.readyState,
+                src: videoElement.currentSrc
+            });
+        });
+        
+        videoElement.addEventListener('loadstart', function() {
+            console.log('🔄 Video loading started...');
+        });
+        
+        videoElement.addEventListener('canplay', function() {
+            console.log('✅ Video can play');
+        });
+        
+        videoElement.addEventListener('waiting', function() {
+            console.log('⏳ Video waiting for data');
+        });
+        
+        videoElement.addEventListener('playing', function() {
+            console.log('🎬 Video started playing');
+        });
+    }
+}
+
+
+
+
 }
