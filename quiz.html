@@ -2,27 +2,83 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz • Study Sanctuary</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Add the CSS from step 4 here */
+    </style>
 </head>
-
 <body>
+    <div id="bg-video"></div>
+    
     <header>
-        <h1>Quiz</h1>
+        <h1 id="quiz-title">Loading Quiz...</h1>
         <nav>
             <a href="index.html">Home</a>
             <a href="subjects.html">Subjects</a>
+            <a href="souls.html">Souls Shop</a>
         </nav>
     </header>
 
     <section class="content">
-        <h2 id="quiz-title">Loading quiz...</h2>
-
         <div id="quiz-container">
-            <!-- questions will be added later -->
+            <!-- Quiz Header -->
+            <div class="quiz-header">
+                <div class="quiz-meta">
+                    <span id="quiz-info">Loading...</span>
+                    <span id="quiz-difficulty" class="quiz-tag difficulty-easy">Easy</span>
+                    <span id="quiz-author" class="quiz-tag author-hajime">by Hajime</span>
+                </div>
+                <div id="quiz-description">Loading quiz description...</div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div class="progress-info">
+                <span id="progress-text">0/0</span>
+                <span id="quiz-timer">00:00</span>
+                <span id="score">Score: 0</span>
+            </div>
+
+            <!-- Question Navigation (for longer quizzes) -->
+            <div class="question-nav" id="question-navigation" style="display: none;">
+                <!-- Will be populated by JavaScript -->
+            </div>
+
+            <!-- Current Question -->
+            <div class="question-container">
+                <div class="question-counter" id="question-number">Question 1</div>
+                <div id="question" style="font-size: 1.3em; line-height: 1.6;">Loading question...</div>
+                
+                <div id="options" class="options">
+                    <!-- Options will be inserted here -->
+                </div>
+
+                <!-- Feedback -->
+                <div id="feedback" class="feedback" style="display: none;"></div>
+                
+                <!-- Explanation -->
+                <div id="explanation" class="explanation" style="display: none;"></div>
+            </div>
+
+            <!-- Quiz Controls -->
+            <div class="quiz-controls">
+                <button id="prev-btn" class="control-btn" style="display: none;">← Previous</button>
+                <button id="skip-btn" class="control-btn">Skip Question</button>
+                <button id="next-btn" class="control-btn primary" style="display: none;">Next Question →</button>
+                <button id="finish-btn" class="control-btn danger" style="display: none;">Finish Quiz</button>
+            </div>
         </div>
     </section>
 
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
     <script src="script.js"></script>
+    <script>
+        // Quiz-specific JavaScript will be loaded from script.js
+    </script>
 </body>
 </html>
