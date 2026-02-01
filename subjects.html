@@ -2,28 +2,268 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subjects • Study Sanctuary</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .subjects-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .subject-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .subject-card:hover {
+            transform: translateY(-5px);
+            border-color: #764ba2;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subject-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .subject-icon {
+            font-size: 2.5em;
+            margin-right: 20px;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+        
+        .subject-info h2 {
+            margin: 0 0 5px 0;
+            color: white;
+        }
+        
+        .subject-info p {
+            margin: 0;
+            color: #aaa;
+            font-size: 0.9em;
+        }
+        
+        .quizzes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .quiz-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .quiz-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .quiz-name {
+            font-weight: bold;
+            color: white;
+            font-size: 1.1em;
+            margin: 0;
+        }
+        
+        .quiz-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .quiz-tag {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .difficulty-easy { background: rgba(76, 175, 80, 0.3); color: #4CAF50; }
+        .difficulty-medium { background: rgba(255, 152, 0, 0.3); color: #FF9800; }
+        .difficulty-hard { background: rgba(244, 67, 54, 0.3); color: #f44336; }
+        
+        .author-ai { background: rgba(63, 81, 181, 0.3); color: #3F51B5; }
+        .author-hajime { background: rgba(156, 39, 176, 0.3); color: #9C27B0; }
+        
+        .quiz-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 10px;
+        }
+        
+        .no-quizzes {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+            font-style: italic;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9em;
+            z-index: 1000;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .subject-stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    </style>
 </head>
-
 <body>
+    <div id="bg-video"></div>
+    
+    <a href="index.html" class="back-btn">← Back to Home</a>
+    
     <header>
-        <h1>Subjects</h1>
+        <h1>Subjects & Quizzes</h1>
         <nav>
             <a href="index.html">Home</a>
-            <a href="quiz.html">Quiz</a>
+            <a href="souls.html">Souls Shop</a>
+            <a href="profile.html">Profile</a>
         </nav>
     </header>
 
     <section class="content">
-        <ul class="subject-list">
-            <li><a href="quiz.html?subject=math">Mathematics</a></li>
-            <li><a href="quiz.html?subject=physics">Physics</a></li>
-            <li><a href="quiz.html?subject=chemistry">Chemistry</a></li>
-            <li><a href="quiz.html?subject=english">English</a></li>
-        </ul>
+        <div class="subjects-container">
+            <!-- Mathematics -->
+            <div class="subject-card">
+                <div class="subject-header">
+                    <div class="subject-icon">🧮</div>
+                    <div class="subject-info">
+                        <h2>Mathematics</h2>
+                        <p>Master numbers, equations, and mathematical concepts</p>
+                        <div class="subject-stats">
+                            <div class="stat-item">📊 5 quizzes available</div>
+                            <div class="stat-item">🎯 125 questions total</div>
+                            <div class="stat-item">⭐ 4.8/5 difficulty</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quizzes-grid" id="math-quizzes">
+                    <!-- Quizzes will be loaded dynamically -->
+                </div>
+            </div>
+
+            <!-- Physics -->
+            <div class="subject-card">
+                <div class="subject-header">
+                    <div class="subject-icon">⚛️</div>
+                    <div class="subject-info">
+                        <h2>Physics</h2>
+                        <p>Explore the laws of the universe and motion</p>
+                        <div class="subject-stats">
+                            <div class="stat-item">📊 4 quizzes available</div>
+                            <div class="stat-item">🎯 100 questions total</div>
+                            <div class="stat-item">⭐ 4.5/5 difficulty</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quizzes-grid" id="physics-quizzes">
+                    <!-- Quizzes will be loaded dynamically -->
+                </div>
+            </div>
+
+            <!-- Chemistry -->
+            <div class="subject-card">
+                <div class="subject-header">
+                    <div class="subject-icon">🧪</div>
+                    <div class="subject-info">
+                        <h2>Chemistry</h2>
+                        <p>Discover elements, reactions, and chemical bonds</p>
+                        <div class="subject-stats">
+                            <div class="stat-item">📊 3 quizzes available</div>
+                            <div class="stat-item">🎯 75 questions total</div>
+                            <div class="stat-item">⭐ 4.2/5 difficulty</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quizzes-grid" id="chemistry-quizzes">
+                    <!-- Quizzes will be loaded dynamically -->
+                </div>
+            </div>
+
+            <!-- English -->
+            <div class="subject-card">
+                <div class="subject-header">
+                    <div class="subject-icon">📚</div>
+                    <div class="subject-info">
+                        <h2>English</h2>
+                        <p>Improve grammar, vocabulary, and comprehension</p>
+                        <div class="subject-stats">
+                            <div class="stat-item">📊 4 quizzes available</div>
+                            <div class="stat-item">🎯 80 questions total</div>
+                            <div class="stat-item">⭐ 3.8/5 difficulty</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quizzes-grid" id="english-quizzes">
+                    <!-- Quizzes will be loaded dynamically -->
+                </div>
+            </div>
+        </div>
     </section>
 
     <script src="script.js"></script>
+    <script src="quizLoader.js"></script>
 </body>
 </html>
